@@ -1,0 +1,9 @@
+# depslib dependency file v1.0
+1592460560 source:c:\sagar_all\1 higher study related all_from old pc\all about tomer weiss\assignments given by tomer\2 done codes of assignment\4 animating circle movement\main.c
+	<stdio.h>
+	<stdbool.h>
+	<GL/glut.h>
+	<math.h>
+	<windows.h>
+	<stdlib.h>
+

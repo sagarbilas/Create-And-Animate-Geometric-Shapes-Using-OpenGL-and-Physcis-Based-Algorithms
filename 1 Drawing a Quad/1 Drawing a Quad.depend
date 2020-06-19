@@ -1,0 +1,5 @@
+# depslib dependency file v1.0
+1592460204 source:c:\sagar_all\1 higher study related all_from old pc\all about tomer weiss\assignments given by tomer\2 done codes of assignment\1 drawing a quad\main.c
+	<GL/gl.h>
+	<GL/glut.h>
+
