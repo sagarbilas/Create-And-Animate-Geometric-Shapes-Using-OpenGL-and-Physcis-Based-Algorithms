@@ -1,0 +1,7 @@
+# depslib dependency file v1.0
+1593849392 source:c:\sagar_all\1 higher study related all_from old pc\all about tomer weiss\assignments given by tomer\2 done codes of assignment\6 avoidanceforce-basedcrowdsimulation(distance focused)\main.c
+	<GL/glut.h>
+	<stdio.h>
+	<math.h>
+	<stdlib.h>
+
