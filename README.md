@@ -22,3 +22,9 @@ Implement a rectangular boundary of in the range of x=[-2.5,2.5] and y=[-2.5,2.5
 
 5. Implement the previous assignment, but have 50 circles moving around  
 Initial locations of circles should be random. We suggest you enlarge the boundary. 
+
+6. Avoidance Force-based Crowd Simulation (Distance Focused):
+
+7. Calculating Frames Per Second:
+With the crowd simulation you implemented in step 6, calculate the number of frames per second. The number of frames per second should be displayed on the screen and not flicker.
+
