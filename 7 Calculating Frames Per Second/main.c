@@ -2,25 +2,30 @@
 #include <stdio.h>
 #include <math.h>
 #include <stdlib.h>
+#include <time.h>
+
 #define WIDTH 800
 #define HEIGHT 600
 #define RADIUS 8
 #define NSEGMENTS 100
 #define PI 3.1415926535
 
-int numCircles, count=0, XMax[50], XMin[50], YMax[50], YMin[50], timeSinceStart[50], interacting_agents_cntr = 0;
-float color1[150], color2[150], color3[150], centerX[100], centerY[100];
-float waitTime, AGENTSIZE = RADIUS*2, d_h = RADIUS*2*4, vx[100], vy[100], vx_goal[100], vy_goal[100], f_goal_x, f_goal_y, f_avoid_x=0, f_avoid_y=0, f_avoid_ctr=0;
-
+int numCircles, count=0, XMax[50], XMin[50], YMax[50], YMin[50] ;
+float color1[150], color2[150], color3[150], centerX[100], centerY[100], waitTime, AGENTSIZE = RADIUS*2, d_h = RADIUS*2*4, vx[100], vy[100], vx_goal[100], vy_goal[100];
+float fps = 0, fps_avg = 0, f_avoid_x = 0, f_avoid_y = 0, f_avoid_ctr = 0, f_goal_x, f_goal_y;
 //float TIME_STEP = 25;
 //float TIME_STEP = 0.42;
 float TIME_STEP = 1.2;
 float MAX_SPEED = 1.99;
 //float MAX_FORCE = 0.05;
-float MAX_FORCE = 0.07, zeta = 1.0023;
+float MAX_FORCE = 0.07;
+float zeta = 1.0023;
+int initial_time = 0, final_time, frame_count=0, lastTime=0, frames = 0, totalTime = 0, updateTime = 0, updateFrames =0, interacting_agents_cntr = 0, timeSinceStart[50];
 
 void display(void);
 void drawCircle(float, float, float);
+void introscreen();
+
 float max(float num1, float num2)
 {
     return (num1 > num2 ) ? num1 : num2;
@@ -28,11 +33,15 @@ float max(float num1, float num2)
 
 void init(void)
 {
+    lastTime = glutGet(GLUT_ELAPSED_TIME);
+
     glClearColor(0.0, 0.0, 0.0, 1.0);
     glMatrixMode(GL_PROJECTION);
     glLoadIdentity();
     gluOrtho2D(0, WIDTH, 0, HEIGHT);
     glMatrixMode(GL_MODELVIEW);
+    glLoadIdentity();
+
     waitTime = 25;
 
     //SETTING INITIAL POSITION OF THE CIRCLE RANDOMLY.AND CREATING SOME RANDOM COLORS
@@ -53,11 +62,10 @@ void init(void)
         vx_goal[i] = (double)rand() / (double)RAND_MAX*2;
         vy_goal[i] = (double)rand() / (double)RAND_MAX*2;
 
-        // printf("vx[%d]= %.3f, vy[%d]= %.3f\n", i, vx[i], i, vy[i]);
+        //printf("vx[%d]= %.3f, vy[%d]= %.3f\n", i, vx[i], i, vy[i]);
     }
     glutPostRedisplay();
 }
-
 
 void display(void)
 {
@@ -68,7 +76,45 @@ void display(void)
         //glColor3f(1.0, 0.0, 0.0);
         drawCircle(centerX[i], centerY[i], RADIUS);
     }
+
+    char fps_result[50], fps_avg_result[50];
+
+    int now =  glutGet(GLUT_ELAPSED_TIME);
+    int delta = now - lastTime;
+    lastTime = now;
+    totalTime+=delta;
+    frames++;
+    updateTime+=delta;
+    updateFrames++;
+    if(updateTime > 1000)
+    {
+        fps = 1000*frames/totalTime;
+        fps_avg = 1000*updateFrames/updateTime;
+
+       // printf("fps = %.2f fps_avg = %.2f\n\n", fps, fps_avg);
+
+        updateTime = 0;
+        updateFrames =0;
+    }
+    sprintf(fps_result, "FPS: %.2f,     FPS_AVG: %.2f", fps, fps_avg);
+    drawBitmapText(fps_result,50,0);
+
+    glLoadIdentity();
+    //drawBitmapText("Displaying text in opengl",50,0);
+    //drawBitmapText(result,50,0);
+    glutSwapBuffers();
     glFlush();
+}
+
+void drawBitmapText(char *string,float x,float y)
+{
+    char *c;
+    glRasterPos2f(x,y);
+
+    for (c=string; *c != '\0'; c++)
+    {
+        glutBitmapCharacter(GLUT_BITMAP_TIMES_ROMAN_24, *c);
+    }
 }
 
 
@@ -96,6 +142,7 @@ void timerFunc(int value)
         float x1, x2, y1, y2;
         x1 = centerX[i];
         y1 = centerY[i];
+        //int timeSinceStart = glutGet(GLUT_ELAPSED_TIME);
 
         if(x1 > (WIDTH - RADIUS) || x1 < (WIDTH + RADIUS) )
             centerX[i] = x1 + vx[i];
@@ -121,10 +168,12 @@ void timerFunc(int value)
             else
             {
                 float distanceBtwnCenters = sqrt(((centerX[i] - centerX[j])*(centerX[i] - centerX[j])) + ((centerY[i] - centerY[j])*(centerY[i] - centerY[j])));
+                //printf("distance between circle[%d] & circle[%d] = %.3f\n", i, j, distanceBtwnCenters);
                 /*
                 if(distanceBtwnCenters <= 30)
                     //drawCircle(centerX[j], centerY[j], RADIUS);
                     centerX[i] = centerX[i] - vx[i];
+                    //centerY[i] = centerY[i] - vy[i];
                 */
                 if(distanceBtwnCenters > 0 && distanceBtwnCenters < d_h)
                 {
@@ -165,8 +214,9 @@ void timerFunc(int value)
             vx[i] = MAX_SPEED * vx[i] / speed  ;
             vy[i] = MAX_SPEED * vy[i] / speed;
         }
-       // centerX[i] += TIME_STEP* vx[i];
-       // centerY[i] += TIME_STEP* vy[i];
+        // centerX[i] += TIME_STEP* vx[i];
+        // centerY[i] += TIME_STEP* vy[i];
+
 
     }
     glutPostRedisplay();
@@ -182,7 +232,7 @@ int main(int argc, char *argv[])
     glutInitDisplayMode(GLUT_SINGLE | GLUT_RGB);
     glutInitWindowSize(WIDTH, HEIGHT);
     glutInitWindowPosition(0,0);
-    glutCreateWindow("Avoidance Force-based Crowd Simulation (distance focused)");
+    glutCreateWindow("Calculating Frames Per Second");
     glutDisplayFunc(display);
     glutTimerFunc(waitTime, timerFunc, 1);
 
