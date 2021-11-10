@@ -1,5 +1,5 @@
 # OpenGL-Codes
-Here, I have implemented some OpenGL projects using C++. 
+Here, I have implemented some OpenGL projects using C. 
 
 1. Drawing a Quad
 Implement a function that draws a Quad called drawQuad(). Quad should be filled with the rgb color of (0.807, 0.0, 0.0)
