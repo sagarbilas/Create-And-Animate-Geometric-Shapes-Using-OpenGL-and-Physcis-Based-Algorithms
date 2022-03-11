@@ -1,4 +1,4 @@
-# OpenGL-Codes
+# Create And Animate Geometric Shapes Using OpenGL and Physcis Based Algorithms
 Here, I have implemented some OpenGL projects using C and OpenGL API. The problem descriptions of the projects given below:
 
 **Problem-1. Drawing a Quad:**
